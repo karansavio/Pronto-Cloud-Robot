@@ -6,20 +6,29 @@ import java.util.List;
 public class RobotMain {
 
     public static void main(String[] args) {
-        String commandsString = args[0];
-        List<Commands> commands = parseCommands(commandsString);
 
-        Position position = new Position(0, 0, Direction.Directions.NORTH);
+        String commandsString = args[0];
+        // Calls the calculateMovements method to output the totalDistance as per the user input
+        calculateMovements(commandsString);
+    }
+
+    public static int calculateMovements(String commandsString) {
+        List<Commands> commands = parseCommands(commandsString); // Parsing commands string into a list of Command objects
+
+        Position position = new Position(0, 0, Direction.Directions.NORTH); // Create a Position object representing the starting point (0, 0) and facing North
 
         int totalDistance = 0;
         for (Commands command : commands) {
-            totalDistance += executeCommand(position, command);
+            totalDistance += executeCommand(position, command); // Execute the current command on the robot's position and adds to the total distance
         }
 
         // Calculate final distance based on robot's final position
-        int finalDistance = position.getDistanceToStartPos();
+        totalDistance = position.getDistanceToStartPos();
 
-        System.out.println("Minimum distance to return to starting point: " + finalDistance);
+        // Prints the total distance to return to the starting point
+        System.out.println("Minimum distance to return to starting point: " + totalDistance);
+
+        return totalDistance;
     }
 
     public static List<Commands> parseCommands(String commandsString) {
