@@ -6,125 +6,49 @@ import java.util.List;
 public class RobotMain {
 
     public static void main(String[] args) {
-
         String commandsString = args[0];
-        List<Command> commands = parseCommands(commandsString);
+        List<Commands> commands = parseCommands(commandsString);
 
-        Position position = new Position(0, 0, Direction.NORTH);
-        // Direction direction = Direction.NORTH;
+        Position position = new Position(0, 0, Direction.Directions.NORTH);
 
         int totalDistance = 0;
-        for (Command command : commands) {
+        for (Commands command : commands) {
             totalDistance += executeCommand(position, command);
         }
 
         // Calculate final distance based on robot's final position
-        int finalDistance = position.getDistanceToOrigin();
+        int finalDistance = position.getDistanceToStartPos();
 
         System.out.println("Minimum distance to return to starting point: " + finalDistance);
     }
 
-    private static List<Command> parseCommands(String commandsString) {
-        List<Command> commands = new ArrayList<>();
-        for (String commandStr : commandsString.split(",")) {
-            char directionChar = commandStr.charAt(0);
-            int distance = Integer.parseInt(commandStr.substring(1));
-            commands.add(new Command(Direction.valueOf(String.valueOf(directionChar)), distance));
+    public static List<Commands> parseCommands(String commandsString) {
+        List<Commands> commands = new ArrayList<>();
+        for (String commandStr : commandsString.split(",")) { // Split the commands string by comma
+            char directionChar = commandStr.charAt(0); // Get the direction character (F, B, L, R)
+            int distance = Integer.parseInt(commandStr.substring(1)); // Get the distance as an integer (ignoring the direction character)
+            commands.add(new Commands(Direction.Directions.valueOf(String.valueOf(directionChar)), distance)); // Create a Command object and add it to the list
         }
         return commands;
     }
 
-    private static int executeCommand(Position position, Command command) {
+    public static int executeCommand(Position position, Commands command) {
         switch (command.getDirection()) {
             case F:
-                position.moveForward(command.getDistance());
+                position.moveAhead(command.getDistance());
                 return command.getDistance();
             case B:
-                position.moveBackward(command.getDistance());
+                position.moveBehind(command.getDistance());
                 return command.getDistance();
             case L:
-                // direction = direction.turnLeft();
-                position.direction = position.direction.turnLeft();
+                position.dir = position.dir.turnLeft();
                 return 0;
             case R:
-                // direction = direction.turnRight();
-                position.direction = position.direction.turnRight();
+                position.dir = position.dir.turnRight();
                 return 0;
             default:
                 break;
         }
         return 0;
-    }
-}
-
-enum Direction {
-    NORTH,
-    EAST,
-    SOUTH,
-    WEST, F, B, L, R;
-
-    public Direction turnLeft() {
-        return values()[(ordinal() - 1 + values().length) % values().length];
-    }
-
-    public Direction turnRight() {
-        return values()[(ordinal() + 1) % values().length];
-    }
-}
-
-class Position {
-    private int x;
-    private int y;
-    Direction direction;
-
-    public Position(int x, int y, Direction direction) {
-        this.x = x;
-        this.y = y;
-        this.direction = direction;
-    }
-
-    public void moveForward(int distance) {
-            switch (direction) {            
-            case NORTH:
-                y += distance;
-                break;
-            case SOUTH:
-                y -= distance;
-                break;
-            case EAST:
-                x += distance;
-                break;
-            case WEST:
-                x -= distance;
-                break;                
-            default:
-                break;
-        }
-    }
-
-    public void moveBackward(int distance) {
-        moveForward(-distance);
-    }
-
-    public int getDistanceToOrigin() {
-        return Math.abs(x) + Math.abs(y);
-    }
-}
-
-class Command {
-    private final Direction direction;
-    private final int distance;
-
-    public Command(Direction direction, int distance) {
-        this.direction = direction;
-        this.distance = distance;
-    }
-
-    public Direction getDirection() {
-        return direction;
-    }
-
-    public int getDistance() {
-        return distance;
     }
 }
