@@ -6,8 +6,22 @@ import java.util.List;
 public class RobotMain {
 
     public static void main(String[] args) {
+        // Check if there's exactly one argument, if there is then display an error message
+        if (args.length != 1) {
+            System.err.println("Incorrect Input! Please enter a valid input");
+            System.exit(1);
+        }
+
+        // Loops through the arguments to check if a valid input has been entered, else print an error message
+        for (String arg : args) {
+            if (!isValidInput(arg)) {
+                System.err.println("Error! Invalid input value: " + arg);
+                System.exit(1);
+            }
+        }
 
         String commandsString = args[0];
+
         // Calls the calculateMovements method to output the totalDistance as per the user input
         calculateMovements(commandsString);
     }
@@ -29,6 +43,28 @@ public class RobotMain {
         System.out.println("Minimum distance to return to starting point: " + totalDistance);
 
         return totalDistance;
+    }
+
+    public static boolean isValidInput(String command) {
+        // Invalid input length, it should contain 2 characters
+        if (command.length() < 2) {
+            return false; 
+        }
+    
+        char firstChar = command.charAt(0);
+        char secondChar = command.charAt(1);
+    
+        //Checking the first character should be F, R, B, or L
+        if (! (firstChar == 'F' || firstChar == 'R' || firstChar == 'B' || firstChar == 'L')) {
+            return false;
+        }
+    
+        //Checking the second character should be a number
+        if (!Character.isDigit(secondChar)) {
+            return false;
+        }
+    
+        return true;
     }
 
     public static List<Commands> parseCommands(String commandsString) {
