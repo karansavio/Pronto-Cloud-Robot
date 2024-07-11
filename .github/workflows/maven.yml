@@ -30,7 +30,15 @@ jobs:
 
     # Build Docker image
     - name: Build Docker image
-      run: docker build -t robot-app .        
+      run: docker build -t robot-app .
+
+    - name: Save Docker image as tar file
+      run: docker save -o robot-app.tar robot-app
+    - name: Upload Docker image tar file
+      uses: actions/upload-artifact@v3
+      with:
+        name: robot-app-tar
+        path: robot-app.tar              
 
   publish-to-staging:
     runs-on: ubuntu-latest
@@ -42,6 +50,14 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
+    - name: Download Docker image tar file
+      uses: actions/download-artifact@v3
+      with: 
+        name: robot-app-tar
+        path: .
+    - name: Load Docker image from tar file
+      run: docker load -i robot-app.tar        
+    - name: Verify Java package        
     - run: mvn --batch-mode --update-snapshots verify
     - run: mkdir staging && cp target/*.jar staging
     - uses: actions/upload-artifact@v3
