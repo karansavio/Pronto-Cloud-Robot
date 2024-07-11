@@ -28,6 +28,10 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
+    # Build Docker image
+    - name: Build Docker image
+      run: docker build -t robot-app .        
+
   publish-to-staging:
     runs-on: ubuntu-latest
     needs: build-test
